@@ -1,0 +1,19 @@
+# Local fonts (optional)
+
+Hozir sayt hech qanday tashqi so'rovsiz, tizim shriftlari (system fonts) bilan ishlaydi —
+bu eng tez variant.
+
+Agar screenshotdagi kabi **Inter** va **Marcellus** shriftlarini local qo'shmoqchi bo'lsangiz:
+
+1. https://fonts.google.com/specimen/Inter va https://fonts.google.com/specimen/Marcellus
+   sahifalaridan "Download family" tugmasi orqali `.ttf` fayllarni yuklab oling.
+2. `.ttf` fayllarni `.woff2` formatga o'giring (masalan https://cloudconvert.com/ttf-to-woff2
+   yoki `npx google-font-installer`).
+3. Natijadagi fayllarni shu papkaga qo'ying:
+   - `css/fonts/Inter-Variable.woff2`
+   - `css/fonts/Marcellus-Regular.woff2`
+4. `css/style.css` faylining eng boshidagi `@font-face` bloklarini kommentdan chiqaring
+   (`/* ... */` ichidan olib tashlang).
+
+Shundan so'ng brauzer avval local faylni yuklaydi, faylni topa olmasa avtomatik
+tizim shriftiga qaytadi — sayt hech qachon buzilmaydi.
