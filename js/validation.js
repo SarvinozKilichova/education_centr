@@ -133,7 +133,6 @@
     phone: `+${PHONE_COUNTRY_CODE}${getLocalDigits(phoneInput.value)}`,
     course: optionText(form.elements.course),
     level: optionText(form.elements.level),
-    page: window.location.href,
     submittedAt: new Date().toISOString(),
   });
 
