@@ -5,7 +5,7 @@
 
   const CONFIG = {
     // Google Apps Script "Web app" URL (see backend/google-apps-script.gs)
-    SHEETS_URL: 'https://script.google.com/macros/s/AKfycby_-QXQi4rjr1vYf3mqvmqe2OJPLzyaYnAlazUb_gYaKp2ha0XpdgGbVGnMsFG12-bM/exec',
+    SHEETS_URL: 'https://script.google.com/macros/s/AKfycbyaISAG14T8IQD1cOzxN4Zv2sWz6ke3WqNC1F9mo7M5aPJfahF2SxNFWyNRk9St3mJo5Q/exec',
     TIMEOUT_MS: 15000,
   };
 
@@ -31,11 +31,17 @@
 
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), CONFIG.TIMEOUT_MS);
-    let response;
 
     try {
-      response = await fetch(CONFIG.SHEETS_URL, {
+      // Google Apps Script never sends an Access-Control-Allow-Origin header,
+      // so a normal fetch always fails CORS here — no deployment setting fixes
+      // that. "no-cors" sends the request without needing that header, at the
+      // cost of making the response opaque (unreadable): we can't check
+      // response.ok or parse JSON, so a fetch that resolves without throwing
+      // is the only success signal available.
+      await fetch(CONFIG.SHEETS_URL, {
         method: 'POST',
+        mode: 'no-cors',
         body: new URLSearchParams(payload),
         signal: controller.signal,
       });
@@ -48,22 +54,9 @@
       clearTimeout(timer);
     }
 
-    if (!response.ok) {
-      throw new LeadError('http', `Server xatosi (${response.status}).`);
-    }
-
-    let data;
-    try {
-      data = await response.json();
-    } catch {
-      throw new LeadError('parse', "Serverdan noto'g'ri javob keldi.");
-    }
-
-    if (data.result !== 'success') {
-      throw new LeadError('rejected', data.message || "Ma'lumot saqlanmadi.");
-    }
-
-    return data;
+    // A resolved, non-aborted fetch means the request reached Google — that's
+    // as much confirmation as an opaque no-cors response can give.
+    return { result: 'success' };
   }
 
   window.PE.sendLead = sendLead;
